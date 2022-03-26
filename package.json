@@ -18,6 +18,9 @@
     "@angular/platform-browser": "~12.2.0",
     "@angular/platform-browser-dynamic": "~12.2.0",
     "@angular/router": "~12.2.0",
+    "babylonjs": "^4.2.2",
+    "babylonjs-gui": "^4.2.2",
+    "babylonjs-loaders": "^4.2.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
