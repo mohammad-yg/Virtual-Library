@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractMesh, ActionManager, Color3, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, Scene, SceneLoader, TransformNode, Vector3 } from 'babylonjs';
+import { AbstractMesh, ActionManager, Color3, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, Scene, SceneLoader, TransformNode, Vector3 } from 'babylonjs';
 import 'babylonjs-loaders';
 
 type Book = {
@@ -107,19 +107,34 @@ export class HomeComponent implements OnInit {
     })
 
 
+    var hl = new HighlightLayer("hl1", scene, {
+      // isStroke: true,
+      blurTextureSizeRatio: 1,
+      mainTextureRatio: 1,
+
+      blurHorizontalSize: 1.4,
+      blurVerticalSize: 1.4,
+
+      mainTextureFixedSize: 2048
+    });
+    hl.outerGlow = false;
+    hl.innerGlow = true;
+
     function registerAppliencesActions() {
       books.forEach((book, index) => {
         const itemEventHandlers = [
           {
             name: 'onMouseEnter', handler: (book: Book) =>
               book.meshes?.forEach(mesh => {
-                mesh.renderOutline = true
+                hl.addMesh(mesh as Mesh, new Color3(250, 250, 250));
+                // mesh.renderOutline = true
               })
           },
           {
             name: 'onMouseLeave', handler: (appliance: Book) =>
               book.meshes?.forEach(mesh => {
-                mesh.renderOutline = false
+                hl.removeMesh(mesh as Mesh);
+                // mesh.renderOutline = false
               })
           }
         ];
