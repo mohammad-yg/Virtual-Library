@@ -1,16 +1,22 @@
 <div class="card-wrapper">
     <div class="card">
-        <div class="close-icon-wrapper">
-            <app-close-icon class="close-icon" [size]="22"></app-close-icon>
+        <div class="card_">
+            <div class="content">
+                <div class="close-icon-wrapper">
+                    <app-close-icon class="close-icon" [size]="22"></app-close-icon>
+                </div>
+                <div class="title-wrapper">
+                    <h4 class="title">سمفونی مردگان</h4>
+                </div>
+                <app-book-detail-slider imageUrl="/assets/images/book-cover-001.jpg"></app-book-detail-slider>
+                <div class="content">
+                    <app-book-detail-information [data]="informationData"></app-book-detail-information>
+                    <app-book-detail-description [data]="description"></app-book-detail-description>
+                </div>
+            </div>
+            <div class="footer">
+                <app-book-detail-footer price="124,000"></app-book-detail-footer>
+            </div>
         </div>
-        <div class="title-wrapper">
-            <h4 class="title">سمفونی مردگان</h4>
-        </div>
-        <app-book-detail-slider imageUrl="/assets/images/book-cover-001.jpg"></app-book-detail-slider>
-        <div class="content">
-            <app-book-detail-information [data]="informationData"></app-book-detail-information>
-            <app-book-detail-description [data]="description"></app-book-detail-description>
-        </div>
-        <app-book-detail-footer price="124,000"></app-book-detail-footer>
     </div>
 </div>
