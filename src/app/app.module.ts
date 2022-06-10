@@ -14,6 +14,7 @@ import { ArrowChevronRightIconComponent } from './shared/icons/arrow-chevron-rig
 import { ArrowChevronLeftIconComponent } from './shared/icons/arrow-chevron-left-icon/arrow-chevron-left-icon.component';
 import { ArrowChevronUpIconComponent } from './shared/icons/arrow-chevron-up-icon/arrow-chevron-up-icon.component';
 import { ArrowChevronDownIconComponent } from './shared/icons/arrow-chevron-down-icon/arrow-chevron-down-icon.component';
+import { BookDetailFooterComponent } from './book-detail/book-detail-footer/book-detail-footer.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ArrowChevronDownIconComponent } from './shared/icons/arrow-chevron-down
     ArrowChevronRightIconComponent,
     ArrowChevronLeftIconComponent,
     ArrowChevronUpIconComponent,
-    ArrowChevronDownIconComponent
+    ArrowChevronDownIconComponent,
+    BookDetailFooterComponent
   ],
   imports: [
     BrowserModule,
