@@ -1,1 +1,11 @@
-<p>book-detail-row works!</p>
+<div #wrapper class="wrapper">
+    <div class="title-section" (click)="rowOnClick(wrapper)">
+        <h4 class="title">{{title}}</h4>
+        <app-arrow-chevron-left-icon [size]="20" class="icon"></app-arrow-chevron-left-icon>
+    </div>
+    <div class="content">
+        <div class="content_">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>

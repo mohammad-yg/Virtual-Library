@@ -1,1 +1,8 @@
-<p>book-detail-information works!</p>
+<app-book-detail-row title="توضیحات">
+    <div class="wrapper">
+        <div *ngFor="let item of data" class="row">
+            <span class="title">{{item.title}}</span>
+            <span class="value">{{item.value}}</span>
+        </div>
+    </div>
+</app-book-detail-row>

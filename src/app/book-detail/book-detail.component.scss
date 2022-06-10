@@ -1,5 +1,5 @@
 .card-wrapper {
-    width: 300px;
+    width: 350px;
     height: 100%;
     
     position: absolute;
@@ -12,6 +12,7 @@
     position: relative;
 
     margin: 10px;
+    padding: 20px;
 
     border-radius: 8px;
     width: 100%;
@@ -37,4 +38,8 @@
     font-size: 26px;
 
     font-weight: 700;
+}
+
+.content{
+    margin-top: 20px;
 }

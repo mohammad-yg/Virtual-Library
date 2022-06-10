@@ -1,0 +1,23 @@
+.wrapper{
+    display: table;
+}
+
+.row{
+    display: table-row;
+    line-height: 20px;
+    height: 25px;
+}
+
+.title{
+    display: table-cell;
+    font-weight: 600;
+    font-size: 20;
+    max-width: 20%;
+    text-align: right;
+}
+
+.value{
+    display: table-cell;
+    font-weight: 400;
+    font-size: 18;
+}
