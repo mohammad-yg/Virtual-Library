@@ -9,6 +9,7 @@ import { BookDetailSliderComponent } from './book-detail/book-detail-slider/book
 import { BookDetailDescriptionComponent } from './book-detail/book-detail-description/book-detail-description.component';
 import { BookDetailInformationComponent } from './book-detail/book-detail-information/book-detail-information.component';
 import { CloseIconComponent } from './shared/icons/close-icon/close-icon.component';
+import { BookDetailRowComponent } from './book-detail/book-detail-row/book-detail-row.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { CloseIconComponent } from './shared/icons/close-icon/close-icon.compone
     BookDetailSliderComponent,
     BookDetailDescriptionComponent,
     BookDetailInformationComponent,
-    CloseIconComponent
+    CloseIconComponent,
+    BookDetailRowComponent
   ],
   imports: [
     BrowserModule,
