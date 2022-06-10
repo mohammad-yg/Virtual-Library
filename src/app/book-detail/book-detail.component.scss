@@ -1,0 +1,40 @@
+.card-wrapper {
+    width: 300px;
+    height: 100%;
+    
+    position: absolute;
+    display: flex;
+    top: 0;
+    right: 0;
+}
+
+.card {
+    position: relative;
+
+    margin: 10px;
+
+    border-radius: 8px;
+    width: 100%;
+
+    background-color: #acc1d7;
+}
+
+.close-icon-wrapper{
+
+}
+.close-icon {
+    position: absolute;
+
+    right: 5px;
+    top: 5px;
+}
+
+.title-wrapper{
+    margin-top: 20px;
+}
+
+.title{
+    font-size: 26px;
+
+    font-weight: 700;
+}
