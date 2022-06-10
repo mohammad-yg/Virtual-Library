@@ -4,11 +4,19 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
+import { BookDetailComponent } from './book-detail/book-detail.component';
+import { BookDetailSliderComponent } from './book-detail/book-detail-slider/book-detail-slider.component';
+import { BookDetailDescriptionComponent } from './book-detail/book-detail-description/book-detail-description.component';
+import { BookDetailInformationComponent } from './book-detail/book-detail-information/book-detail-information.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    BookDetailComponent,
+    BookDetailSliderComponent,
+    BookDetailDescriptionComponent,
+    BookDetailInformationComponent
   ],
   imports: [
     BrowserModule,
