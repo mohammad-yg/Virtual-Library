@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractMesh, ActionManager, Color3, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, Scene, SceneLoader, TransformNode, Vector3 } from 'babylonjs';
+import { AbstractMesh, ActionManager, Color3, CubicEase, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, MeshBuilder, Scene, SceneLoader, TransformNode, Vector3 } from 'babylonjs';
 import 'babylonjs-loaders';
 
 type Book = {
   nodeId: string,
   title: string,
   description: string,
-  meshes?: AbstractMesh[],
+  coverMeshId: string,
+  paperMeshId: string,
+
+  coverMesh?: AbstractMesh,
+  paperMesh?: AbstractMesh,
 }
 
 const BROWSER_MESH_ACTION_MAP = {
@@ -27,32 +31,44 @@ var books: Book[] = [
   {
     nodeId: 'Book-1',
     title: 'book 1',
-    description: 'it\'s book 1'
+    description: 'it\'s book 1',
+    coverMeshId: 'Book-1-Cover.001',
+    paperMeshId: 'Book-1-Paper',
   },
   {
     nodeId: 'Book-2',
     title: 'book 2',
-    description: 'it\'s book 2'
+    description: 'it\'s book 2',
+    coverMeshId: 'Book-2-Cover',
+    paperMeshId: 'Book-2-Paper',
   },
   {
     nodeId: 'Book-3',
     title: 'book 3',
-    description: 'it\'s book 3'
+    description: 'it\'s book 3',
+    coverMeshId: 'Book-3-Cover',
+    paperMeshId: 'Book-3-Paper',
   },
   {
     nodeId: 'Book-4',
     title: 'book 4',
-    description: 'it\'s book 4'
+    description: 'it\'s book 4',
+    coverMeshId: 'Book-4-Cover',
+    paperMeshId: 'Book-4-Paper',
   },
   {
     nodeId: 'Book-5',
     title: 'book 5',
-    description: 'it\'s book 6'
+    description: 'it\'s book 6',
+    coverMeshId: 'Book-5-Cover',
+    paperMeshId: 'Book-5-Paper',
   },
   {
     nodeId: 'Book-7',
     title: 'book 7',
-    description: 'it\'s book 7'
+    description: 'it\'s book 7',
+    coverMeshId: 'Book-6-Cover',
+    paperMeshId: 'Book-6-Paper',
   }
 ]
 
@@ -95,8 +111,9 @@ export class HomeComponent implements OnInit {
 
     //import books
     SceneLoader.ImportMeshAsync('', '/assets/3d models/books-1.glb').then((result) => {
-      books.forEach(e => {
-        e.meshes = (scene.getNodeByID(e.nodeId) as TransformNode)?.getChildMeshes() as AbstractMesh[];
+      books.forEach(b => {
+        b.coverMesh = result.meshes.find(m => m.id === b.coverMeshId);
+        b.paperMesh = result.meshes.find(m => m.id === b.paperMeshId);
       });
 
       registerAppliencesActions();
@@ -125,17 +142,15 @@ export class HomeComponent implements OnInit {
         const itemEventHandlers = [
           {
             name: 'onMouseEnter', handler: (book: Book) =>
-              book.meshes?.forEach(mesh => {
-                hl.addMesh(mesh as Mesh, new Color3(250, 250, 250));
-                // mesh.renderOutline = true
-              })
+              hl.addMesh(book.coverMesh as Mesh, new Color3(250, 250, 250))
           },
           {
             name: 'onMouseLeave', handler: (appliance: Book) =>
-              book.meshes?.forEach(mesh => {
-                hl.removeMesh(mesh as Mesh);
-                // mesh.renderOutline = false
-              })
+              hl.removeMesh(book.coverMesh as Mesh)
+          },
+          {
+            name: 'onClick', handler: (appliance: Book) =>
+              zoom(camera, appliance.coverMesh!, 2.6, 0.5, undefined)
           }
         ];
 
@@ -146,24 +161,63 @@ export class HomeComponent implements OnInit {
     const attachItemEventHandlers = (book: Book, events: { name: string, handler: (book: Book) => void }[]) => {
       var outlineWidth = 0.005;
 
-      book.meshes?.forEach(mesh => {
+      var mesh = book.coverMesh!;
 
-        mesh.overlayColor = Color3.FromHexString(MESH_OVERLAY_COLOR);
-        mesh.outlineColor = Color3.FromHexString(MESH_OUTLINE_COLOR);
-        mesh.outlineWidth = outlineWidth;
-        mesh.overlayAlpha = 1;
-        mesh.actionManager = new ActionManager(scene);
+      mesh.overlayColor = Color3.FromHexString(MESH_OVERLAY_COLOR);
+      mesh.outlineColor = Color3.FromHexString(MESH_OUTLINE_COLOR);
+      mesh.outlineWidth = outlineWidth;
+      mesh.overlayAlpha = 1;
+      mesh.actionManager = new ActionManager(scene);
 
 
-        events.forEach(({ name, handler }) => {
-          const eventName: string = BROWSER_MESH_ACTION_MAP[name] || BROWSER_MESH_EVENT_MAP[name];
-          const action = new ExecuteCodeAction(
-            (ActionManager as any)[eventName],
-            () => handler(book)
-          );
-          mesh.actionManager?.registerAction(action);
-        });
+      events.forEach(({ name, handler }) => {
+        const eventName: string = BROWSER_MESH_ACTION_MAP[name] || BROWSER_MESH_EVENT_MAP[name];
+        const action = new ExecuteCodeAction(
+          (ActionManager as any)[eventName],
+          () => handler(book)
+        );
+        mesh.actionManager?.registerAction(action);
       });
     }
+
+    const zoom = function (cam: FreeCamera, tar: AbstractMesh, dist?: number, height?: number, addMovePosition?: Vector3) {
+      if (!dist)
+        dist = -3;
+      if (!height)
+        height = 0;
+
+      var targetEndPos = tar.getAbsolutePosition();
+
+
+      var camStartPos = cam.position;
+
+      // set animation period based on distance to target
+      var xs = Math.abs(camStartPos.x - targetEndPos.x);
+      var zs = Math.abs(camStartPos.z - targetEndPos.z);
+      var tm = Number(xs) + Number(zs);
+      var tf = (tm as any).toFixed(2) * 10;
+      if (tf < 100) { tf = 100; }
+
+      var speed1 = 25; //frames per second walk
+      var speed2 = 25; //frames per second rotate
+
+      tar.computeWorldMatrix();
+      var matrix = (tar as any).getWorldMatrix(true);
+      var local_position = new Vector3(0, 0, 0);
+      local_position.addInPlace(new Vector3(dist, height, 0));
+      var global_position = Vector3.TransformCoordinates(local_position, matrix);
+
+      var movePosition = global_position;
+
+      if (addMovePosition)
+        movePosition.addInPlace(addMovePosition);
+
+      var rotatePosition = targetEndPos.clone();
+
+      var ease = new CubicEase();
+      ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+      var globalWalkAnimatable = BABYLON.Animation.CreateAndStartAnimation('cwalk', cam as any, 'position', speed1, tf, cam.position, movePosition, 0, ease as any); // Move to target
+      var globalCtargetAnimatable = BABYLON.Animation.CreateAndStartAnimation('ctarget', cam as any, 'target', speed2, tf, cam.target, rotatePosition, 0, ease as any); // Rotate to target
+    };
   }
 }
