@@ -32,7 +32,6 @@ export class BookDetailComponent implements OnInit, modal {
 
   close() {
     this.show = false;
-    this.data = new bookDetail;
   }
 
 }
