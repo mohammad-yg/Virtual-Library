@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-book-detail-row[title]',
@@ -12,6 +12,9 @@ export class BookDetailRowComponent implements OnInit {
   rowIsOpen: boolean = false;
 
   @Input() title: string = '';
+  @Input() height: string = '200px';
+
+  h: string = '0px';
 
   ngOnInit(): void {
   }
@@ -20,10 +23,12 @@ export class BookDetailRowComponent implements OnInit {
     //close
     if (this.rowIsOpen) {
       wrapper.classList.remove('open');
+      this.h = '0px';
     }
     //open
     else {
       wrapper.classList.add('open');
+      this.h = this.height;
     }
 
     this.rowIsOpen = !this.rowIsOpen;
