@@ -1,21 +1,21 @@
-<div *ngIf="show" class="card-wrapper">
+<div [class]="'card-wrapper ' + (show ? 'active' : '')">
     <div class="card">
         <div class="card_">
             <div class="content">
-                <div class="close-icon-wrapper" (click)="onCloseClick()">
+                <div class="close-icon-wrapper" (click)="close()">
                     <app-close-icon class="close-icon" [size]="22"></app-close-icon>
                 </div>
                 <div class="title-wrapper">
-                    <h4 class="title">سمفونی مردگان</h4>
+                    <h4 class="title">{{data.title}}</h4>
                 </div>
-                <app-book-detail-slider imageUrl="/assets/images/book-cover-001.jpg"></app-book-detail-slider>
+                <app-book-detail-slider [imageUrl]="data.imageUrl"></app-book-detail-slider>
                 <div class="content">
-                    <app-book-detail-information [data]="data.informationData"></app-book-detail-information>
+                    <app-book-detail-information [data]="data.information"></app-book-detail-information>
                     <app-book-detail-description [data]="data.description"></app-book-detail-description>
                 </div>
             </div>
             <div class="footer">
-                <app-book-detail-footer price="124,000"></app-book-detail-footer>
+                <app-book-detail-footer [price]="data.price"></app-book-detail-footer>
             </div>
         </div>
     </div>

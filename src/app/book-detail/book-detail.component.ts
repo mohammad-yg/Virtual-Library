@@ -1,33 +1,40 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { modal } from '../home/home.component';
 import { BookInformationData } from './book-detail-information/book-detail-information.component';
+import { bookDetail, BookDetailService } from './book-detail.service';
 
 @Component({
   selector: 'app-book-detail',
   templateUrl: './book-detail.component.html',
   styleUrls: ['./book-detail.component.scss']
 })
-export class BookDetailComponent implements OnInit {
+export class BookDetailComponent implements OnInit, modal {
 
-  @Input() data: BookDetailInput = {} as BookDetailInput;
-  @Input() show$: Observable<boolean> = of(false);
-
-  @Output() close = new EventEmitter();
-
+  data: bookDetail = new bookDetail();
   show: boolean = false;
 
-  constructor() {
+  constructor(private bookDetailService: BookDetailService) {
   }
 
   ngOnInit(): void {
-    this.show$.subscribe(res => {
-      this.show = res;
-    })
   }
 
-  onCloseClick(): void {
-    this.close.emit();
+  open(id?: number | undefined) {
+    if (id) {
+      var result = this.bookDetailService.getDetail(id);
+      if (result) {
+        this.data = result;
+        this.show = true;
+      }
+    }
   }
+
+  close() {
+    this.show = false;
+    this.data = new bookDetail;
+  }
+
 }
 
 export type BookDetailInput = {
