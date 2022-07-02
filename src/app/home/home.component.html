@@ -1,2 +1,5 @@
 <canvas id="view"></canvas>
-<app-book-detail></app-book-detail>
+<ng-container>
+    <app-book-detail [data]="bookDetailInput" [show$]="showBookDetail$" (close)="closeBookDetailCard()">
+    </app-book-detail>
+</ng-container>

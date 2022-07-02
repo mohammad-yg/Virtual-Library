@@ -1,8 +1,8 @@
-<div class="card-wrapper">
+<div *ngIf="show" class="card-wrapper">
     <div class="card">
         <div class="card_">
             <div class="content">
-                <div class="close-icon-wrapper">
+                <div class="close-icon-wrapper" (click)="onCloseClick()">
                     <app-close-icon class="close-icon" [size]="22"></app-close-icon>
                 </div>
                 <div class="title-wrapper">
@@ -10,8 +10,8 @@
                 </div>
                 <app-book-detail-slider imageUrl="/assets/images/book-cover-001.jpg"></app-book-detail-slider>
                 <div class="content">
-                    <app-book-detail-information [data]="informationData"></app-book-detail-information>
-                    <app-book-detail-description [data]="description"></app-book-detail-description>
+                    <app-book-detail-information [data]="data.informationData"></app-book-detail-information>
+                    <app-book-detail-description [data]="data.description"></app-book-detail-description>
                 </div>
             </div>
             <div class="footer">
