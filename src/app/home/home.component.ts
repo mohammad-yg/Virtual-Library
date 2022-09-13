@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractMesh, ActionManager, Color3, CubicEase, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, MeshBuilder, Scene, SceneLoader, TransformNode, Vector3 } from 'babylonjs';
+import { AbstractMesh, ActionManager, Color3, CubicEase, DynamicTexture, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, MeshBuilder, Scene, SceneLoader, StandardMaterial, TransformNode, Vector3 } from 'babylonjs';
 import 'babylonjs-loaders';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { BookDetailComponent, BookDetailInformation, BookDetailInput } from '../book-detail/book-detail.component';
@@ -31,9 +31,9 @@ const BROWSER_MESH_EVENT_MAP = {
 const MESH_OUTLINE_COLOR = "#FFFFFF";
 const MESH_OVERLAY_COLOR = "#999999";
 
-export interface modal{
+export interface modal {
   close: () => void,
-  open: (id?:number) => void
+  open: (id?: number) => void
 }
 
 @Component({
@@ -101,7 +101,7 @@ export class HomeComponent implements OnInit {
           },
           {
             name: 'onClick', handler: (appliance: Book) => {
-              zoom(camera, appliance.coverMesh!, 2.6, 0.5, undefined);
+              zoom(camera, appliance.coverMesh!, 4, 0.5, undefined);
               this.bookDetailModal.open(book.id);
             }
           }
@@ -190,6 +190,5 @@ export class HomeComponent implements OnInit {
       var globalWalkAnimatable = BABYLON.Animation.CreateAndStartAnimation('cwalk', cam as any, 'position', speed1, tf, cam.position, movePosition, 0, ease as any); // Move to target
       var globalCtargetAnimatable = BABYLON.Animation.CreateAndStartAnimation('ctarget', cam as any, 'target', speed2, tf, cam.target, rotatePosition, 0, ease as any); // Rotate to target
     };
-
   }
 }
