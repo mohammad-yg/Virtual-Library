@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractMesh, ActionManager, Color3, CubicEase, DynamicTexture, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, MeshBuilder, Scene, SceneLoader, StandardMaterial, TransformNode, Vector3 } from 'babylonjs';
+import { AbstractMesh, ActionManager, Camera, Color3, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, Scene, SceneLoader, Vector3 } from 'babylonjs';
 import 'babylonjs-loaders';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { BookDetailComponent, BookDetailInformation, BookDetailInput } from '../book-detail/book-detail.component';
+import { MESH_OVERLAY_COLOR, MESH_OUTLINE_COLOR, BROWSER_MESH_ACTION_MAP, BROWSER_MESH_EVENT_MAP } from 'src/animations/animationmap';
+import { Hilights } from 'src/animations/highlights';
+import { zoomCameraAnimation } from 'src/animations/zoomCamera';
+import { BookDetailInput } from '../book-detail/book-detail.component';
 import { BookService } from './book.service';
 
 export type Book = {
@@ -16,21 +18,6 @@ export type Book = {
   coverMesh?: AbstractMesh,
   paperMesh?: AbstractMesh,
 }
-
-const BROWSER_MESH_ACTION_MAP = {
-  onMouseEnter: 'OnPointerOverTrigger',
-  onMouseLeave: 'OnPointerOutTrigger',
-  onMouseDown: 'OnPickDownTrigger',
-  onMouseUp: 'OnPickUpTrigger',
-  onClick: 'OnPickTrigger',
-  onDoubleClick: 'OnDoublePickTrigger'
-} as any;
-const BROWSER_MESH_EVENT_MAP = {
-  onLoad: 'onReady'
-} as any;
-const MESH_OUTLINE_COLOR = "#FFFFFF";
-const MESH_OVERLAY_COLOR = "#999999";
-
 export interface modal {
   close: () => void,
   open: (id?: number) => void
@@ -43,9 +30,16 @@ export interface modal {
 })
 export class HomeComponent implements OnInit {
   bookDetailInput: BookDetailInput = { informationData: [], description: '' };
+  canvas: HTMLCanvasElement | undefined;
+  engine: Engine | undefined;
+  scene: Scene | undefined;
+  camera : Camera | undefined;
 
+  hilights : Hilights | undefined;
+  bookHoverHilight : HighlightLayer | undefined;
 
-  // @ViewChild(BookDetailComponent) bookDetail: BookDetailComponent = new BookDetailComponent();
+  hdri : HDRCubeTexture | undefined;
+
   @ViewChild('bookDetailModal', { static: true }) bookDetailModal: modal = { close: () => { }, open: (numbrt) => { } };
 
   constructor(private bookService: BookService) {
@@ -54,31 +48,32 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     var books = this.bookService.getBooks();
 
-    const canvas = document.getElementById('view') as HTMLCanvasElement;
-    const engine = new Engine(canvas, true);
-    const scene = new Scene(engine);
+    this.canvas = document.getElementById('view') as HTMLCanvasElement;
+    this.engine = new Engine(this.canvas, true);
+    this.scene = new Scene(this.engine);
 
-    scene.gravity = new Vector3(0, -0.95, 0);
+    this.scene.gravity = new Vector3(0, -0.95, 0);
 
     //define free camera
-    const camera = new FreeCamera("camera", new Vector3(0, 5, 0), scene);
-    camera.setTarget(new Vector3(1, 4.85, 0));
-    camera.attachControl(canvas, true);
-    camera.applyGravity = true;
+    this.camera = this.defineCamera();
+
+
+    this.hilights = new Hilights(this.scene);
+
+    //define bookHoverHilight
+    this.bookHoverHilight = this.hilights.bookHoverHilight;
 
 
 
     //hdri
-    var hdri = new HDRCubeTexture('/assets/hdris/hdri.hdr', scene, 128, false, true, false, true);
+    this.hdri = new HDRCubeTexture('/assets/hdris/hdri.hdr', this.scene, 128, false, true, false, true);
 
     //sun
-    var sun = new HemisphericLight('sun', new Vector3(0, 0, 0), scene);
+    var sun = new HemisphericLight('sun', new Vector3(0, 0, 0), this.scene);
     sun.intensity *= 2;
 
     //import room model
-    SceneLoader.ImportMeshAsync('', '/assets/3d models/room.glb').then(() => {
-
-    });
+    SceneLoader.ImportMeshAsync('', '/assets/3d models/room.glb').then(() => {});
 
 
     //import books
@@ -93,102 +88,58 @@ export class HomeComponent implements OnInit {
         const itemEventHandlers = [
           {
             name: 'onMouseEnter', handler: (book: Book) =>
-              hl.addMesh(book.coverMesh as Mesh, new Color3(250, 250, 250))
+              this.bookHoverHilight?.addMesh(book.coverMesh as Mesh, new Color3(250, 250, 250))
           },
           {
             name: 'onMouseLeave', handler: (appliance: Book) =>
-              hl.removeMesh(book.coverMesh as Mesh)
+              this.bookHoverHilight?.removeMesh(book.coverMesh as Mesh)
           },
           {
             name: 'onClick', handler: (appliance: Book) => {
-              zoom(camera, appliance.coverMesh!, 4, 0.5, undefined);
+              (new zoomCameraAnimation).animatble(this.camera as FreeCamera, appliance.coverMesh!, 4, 0.5, undefined);
               this.bookDetailModal.open(book.id);
             }
           }
         ];
 
-        attachItemEventHandlers(book, itemEventHandlers);
+        this.attachItemEventHandlers(book, itemEventHandlers);
       });
     });
 
-    engine.runRenderLoop(() => {
-      scene.render();
+    this.engine.runRenderLoop(() => {
+      this.scene?.render();
     })
 
+  }
 
-    var hl = new HighlightLayer("hl1", scene, {
-      // isStroke: true,
-      blurTextureSizeRatio: 1,
-      mainTextureRatio: 1,
+  attachItemEventHandlers (book: Book, events: { name: string, handler: (book: Book) => void }[]) {
+    var outlineWidth = 0.005;
 
-      blurHorizontalSize: 1.4,
-      blurVerticalSize: 1.4,
+    var mesh = book.coverMesh!;
 
-      mainTextureFixedSize: 2048
+    mesh.overlayColor = Color3.FromHexString(MESH_OVERLAY_COLOR);
+    mesh.outlineColor = Color3.FromHexString(MESH_OUTLINE_COLOR);
+    mesh.outlineWidth = outlineWidth;
+    mesh.overlayAlpha = 1;
+    mesh.actionManager = new ActionManager(this.scene as Scene);
+
+
+    events.forEach(({ name, handler }) => {
+      const eventName: string = BROWSER_MESH_ACTION_MAP[name] || BROWSER_MESH_EVENT_MAP[name];
+      const action = new ExecuteCodeAction(
+        (ActionManager as any)[eventName],
+        () => handler(book)
+      );
+      mesh.actionManager?.registerAction(action);
     });
-    hl.outerGlow = false;
-    hl.innerGlow = true;
+  }
 
-    const attachItemEventHandlers = (book: Book, events: { name: string, handler: (book: Book) => void }[]) => {
-      var outlineWidth = 0.005;
+  defineCamera() : Camera{
+    var camera = new FreeCamera("camera", new Vector3(0, 5, 0), this.scene as Scene);
+    camera.setTarget(new Vector3(1, 4.85, 0));
+    camera.attachControl(this.canvas, true);
+    camera.applyGravity = true;
 
-      var mesh = book.coverMesh!;
-
-      mesh.overlayColor = Color3.FromHexString(MESH_OVERLAY_COLOR);
-      mesh.outlineColor = Color3.FromHexString(MESH_OUTLINE_COLOR);
-      mesh.outlineWidth = outlineWidth;
-      mesh.overlayAlpha = 1;
-      mesh.actionManager = new ActionManager(scene);
-
-
-      events.forEach(({ name, handler }) => {
-        const eventName: string = BROWSER_MESH_ACTION_MAP[name] || BROWSER_MESH_EVENT_MAP[name];
-        const action = new ExecuteCodeAction(
-          (ActionManager as any)[eventName],
-          () => handler(book)
-        );
-        mesh.actionManager?.registerAction(action);
-      });
-    }
-
-    const zoom = function (cam: FreeCamera, tar: AbstractMesh, dist?: number, height?: number, addMovePosition?: Vector3) {
-      if (!dist)
-        dist = -3;
-      if (!height)
-        height = 0;
-
-      var targetEndPos = tar.getAbsolutePosition();
-
-
-      var camStartPos = cam.position;
-
-      // set animation period based on distance to target
-      var xs = Math.abs(camStartPos.x - targetEndPos.x);
-      var zs = Math.abs(camStartPos.z - targetEndPos.z);
-      var tm = Number(xs) + Number(zs);
-      var tf = (tm as any).toFixed(2) * 10;
-      if (tf < 100) { tf = 100; }
-
-      var speed1 = 25; //frames per second walk
-      var speed2 = 25; //frames per second rotate
-
-      tar.computeWorldMatrix();
-      var matrix = (tar as any).getWorldMatrix(true);
-      var local_position = new Vector3(0, 0, 0);
-      local_position.addInPlace(new Vector3(dist, height, 0));
-      var global_position = Vector3.TransformCoordinates(local_position, matrix);
-
-      var movePosition = global_position;
-
-      if (addMovePosition)
-        movePosition.addInPlace(addMovePosition);
-
-      var rotatePosition = targetEndPos.clone();
-
-      var ease = new CubicEase();
-      ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-      var globalWalkAnimatable = BABYLON.Animation.CreateAndStartAnimation('cwalk', cam as any, 'position', speed1, tf, cam.position, movePosition, 0, ease as any); // Move to target
-      var globalCtargetAnimatable = BABYLON.Animation.CreateAndStartAnimation('ctarget', cam as any, 'target', speed2, tf, cam.target, rotatePosition, 0, ease as any); // Rotate to target
-    };
+    return camera;
   }
 }
