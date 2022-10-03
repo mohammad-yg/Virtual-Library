@@ -52,7 +52,10 @@ export class HomeComponent implements OnInit {
     this.engine = new Engine(this.canvas, true);
     this.scene = new Scene(this.engine);
 
-    this.scene.gravity = new Vector3(0, -0.95, 0);
+    this.scene.gravity = new Vector3(0, -10, 0);
+    this.scene.collisionsEnabled = true;
+
+
 
     //define free camera
     this.camera = this.defineCamera();
@@ -106,6 +109,18 @@ export class HomeComponent implements OnInit {
       });
     });
 
+    SceneLoader.ImportMeshAsync('' , '/assets/3d models/invisible-walls.glb').then(
+      (result) => {
+        result.meshes.forEach(mesh => {
+          mesh.checkCollisions = true;
+          mesh.isVisible = false;
+        });
+
+        (this.camera as FreeCamera).checkCollisions = true;
+        (this.camera as FreeCamera).applyGravity = true;
+      }
+    )
+
     this.engine.runRenderLoop(() => {
       this.scene?.render();
     })
@@ -135,10 +150,16 @@ export class HomeComponent implements OnInit {
   }
 
   defineCamera() : Camera{
-    var camera = new FreeCamera("camera", new Vector3(0, 5, 0), this.scene as Scene);
-    camera.setTarget(new Vector3(1, 4.85, 0));
+    var camera = new FreeCamera("camera", new Vector3(0, 6, 0), this.scene as Scene);
+    camera.setTarget(new Vector3(1, 6, 0));
     camera.attachControl(this.canvas, true);
-    camera.applyGravity = true;
+    camera.checkCollisions = false;
+    camera.applyGravity = false;
+
+    camera.minZ = 0;
+    camera.ellipsoid = new Vector3(1.6, 3, 1.6);
+
+    camera.speed = 0.5;
 
     return camera;
   }
