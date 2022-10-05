@@ -81,6 +81,18 @@ export class HomeComponent implements OnInit {
     sun.intensity *= 2;
 
     //import room model
+    SceneLoader.ImportMeshAsync('', '/assets/3d models/invisible-walls.glb').then(
+      (result) => {
+        result.meshes.forEach(mesh => {
+          mesh.checkCollisions = true;
+          mesh.isVisible = false;
+        });
+
+        (this.camera as FreeCamera).checkCollisions = true;
+        (this.camera as FreeCamera).applyGravity = true;
+      }
+    )
+
     SceneLoader.ImportMeshAsync('', '/assets/3d models/room.glb').then(() => { });
 
 
@@ -131,17 +143,6 @@ export class HomeComponent implements OnInit {
       });
     });
 
-    SceneLoader.ImportMeshAsync('', '/assets/3d models/invisible-walls.glb').then(
-      (result) => {
-        result.meshes.forEach(mesh => {
-          mesh.checkCollisions = true;
-          mesh.isVisible = false;
-        });
-
-        (this.camera as FreeCamera).checkCollisions = true;
-        (this.camera as FreeCamera).applyGravity = true;
-      }
-    )
 
     this.engine.runRenderLoop(() => {
       this.scene?.render();
