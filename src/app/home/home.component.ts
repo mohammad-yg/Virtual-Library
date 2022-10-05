@@ -3,6 +3,7 @@ import { AbstractMesh, ActionManager, Camera, Color3, Engine, ExecuteCodeAction,
 import 'babylonjs-loaders';
 import { MESH_OVERLAY_COLOR, MESH_OUTLINE_COLOR, BROWSER_MESH_ACTION_MAP, BROWSER_MESH_EVENT_MAP } from 'src/animations/animationmap';
 import { Hilights } from 'src/animations/highlights';
+import { pullingOnBookAnimation } from 'src/animations/pullingOnBook';
 import { takingOutBookAnimation } from 'src/animations/takingOutBook';
 import { zoomCameraAnimation } from 'src/animations/zoomCamera';
 import { BookDetailInput } from '../book-detail/book-detail.component';
@@ -41,8 +42,8 @@ export class HomeComponent implements OnInit {
 
   hdri: HDRCubeTexture | undefined;
 
-  takingOutBookAnimationGroup: AnimationGroup | undefined;
-  takedOutBook : Book | undefined;
+  bookAnimationGroup: AnimationGroup | undefined;
+  takedOutBook: Book | undefined;
 
   @ViewChild('bookDetailModal', { static: true }) bookDetailModal: modal = { close: () => { }, open: (numbrt) => { } };
 
@@ -103,15 +104,25 @@ export class HomeComponent implements OnInit {
           },
           {
             name: 'onClick', handler: (book: Book) => {
-              if(this.takedOutBook !== book){
-                if(this.takedOutBook)
-                this.takingOutBookAnimationGroup?.reset();
+              if (this.takedOutBook !== undefined && this.takedOutBook !== book)
+                this.bookAnimationGroup?.reset();
 
+              if (this.takedOutBook !== book) {
                 this.takedOutBook = book;
                 (new zoomCameraAnimation).animatble(this.camera as FreeCamera, book.coverMesh!, 10, 0.5, undefined);
-                this.takingOutBookAnimationGroup = (new takingOutBookAnimation).animatble(this.camera as FreeCamera, this.scene!, book);
+                this.bookAnimationGroup = (new takingOutBookAnimation).animatble(this.camera as FreeCamera, this.scene!, book);
                 this.bookDetailModal.open(book.id);
               }
+              else {
+                this.bookAnimationGroup?.reset();
+
+                this.bookAnimationGroup = (new pullingOnBookAnimation).animatble(this.camera as FreeCamera, this.scene!, book);
+                this.bookDetailModal.close();
+
+                this.takedOutBook = undefined;
+              }
+
+              console.log('home', (this.scene?.getNodeByID(book.nodeId) as any).position.x);
             }
           }
         ];
