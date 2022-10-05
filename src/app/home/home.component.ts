@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractMesh, ActionManager, Camera, Color3, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, Scene, SceneLoader, Vector3 } from 'babylonjs';
+import { AbstractMesh, ActionManager, Camera, Color3, Engine, ExecuteCodeAction, FreeCamera, HDRCubeTexture, HemisphericLight, HighlightLayer, Mesh, Scene, SceneLoader, Vector3, Animation, AnimationGroup } from 'babylonjs';
 import 'babylonjs-loaders';
 import { MESH_OVERLAY_COLOR, MESH_OUTLINE_COLOR, BROWSER_MESH_ACTION_MAP, BROWSER_MESH_EVENT_MAP } from 'src/animations/animationmap';
 import { Hilights } from 'src/animations/highlights';
+import { takingOutBookAnimation } from 'src/animations/takingOutBook';
 import { zoomCameraAnimation } from 'src/animations/zoomCamera';
 import { BookDetailInput } from '../book-detail/book-detail.component';
 import { BookService } from './book.service';
@@ -33,12 +34,15 @@ export class HomeComponent implements OnInit {
   canvas: HTMLCanvasElement | undefined;
   engine: Engine | undefined;
   scene: Scene | undefined;
-  camera : Camera | undefined;
+  camera: Camera | undefined;
 
-  hilights : Hilights | undefined;
-  bookHoverHilight : HighlightLayer | undefined;
+  hilights: Hilights | undefined;
+  bookHoverHilight: HighlightLayer | undefined;
 
-  hdri : HDRCubeTexture | undefined;
+  hdri: HDRCubeTexture | undefined;
+
+  takingOutBookAnimationGroup: AnimationGroup | undefined;
+  takedOutBook : Book | undefined;
 
   @ViewChild('bookDetailModal', { static: true }) bookDetailModal: modal = { close: () => { }, open: (numbrt) => { } };
 
@@ -76,7 +80,7 @@ export class HomeComponent implements OnInit {
     sun.intensity *= 2;
 
     //import room model
-    SceneLoader.ImportMeshAsync('', '/assets/3d models/room.glb').then(() => {});
+    SceneLoader.ImportMeshAsync('', '/assets/3d models/room.glb').then(() => { });
 
 
     //import books
@@ -94,13 +98,20 @@ export class HomeComponent implements OnInit {
               this.bookHoverHilight?.addMesh(book.coverMesh as Mesh, new Color3(250, 250, 250))
           },
           {
-            name: 'onMouseLeave', handler: (appliance: Book) =>
+            name: 'onMouseLeave', handler: (book: Book) =>
               this.bookHoverHilight?.removeMesh(book.coverMesh as Mesh)
           },
           {
-            name: 'onClick', handler: (appliance: Book) => {
-              (new zoomCameraAnimation).animatble(this.camera as FreeCamera, appliance.coverMesh!, 4, 0.5, undefined);
-              this.bookDetailModal.open(book.id);
+            name: 'onClick', handler: (book: Book) => {
+              if(this.takedOutBook !== book){
+                if(this.takedOutBook)
+                this.takingOutBookAnimationGroup?.reset();
+
+                this.takedOutBook = book;
+                (new zoomCameraAnimation).animatble(this.camera as FreeCamera, book.coverMesh!, 10, 0.5, undefined);
+                this.takingOutBookAnimationGroup = (new takingOutBookAnimation).animatble(this.camera as FreeCamera, this.scene!, book);
+                this.bookDetailModal.open(book.id);
+              }
             }
           }
         ];
@@ -109,7 +120,7 @@ export class HomeComponent implements OnInit {
       });
     });
 
-    SceneLoader.ImportMeshAsync('' , '/assets/3d models/invisible-walls.glb').then(
+    SceneLoader.ImportMeshAsync('', '/assets/3d models/invisible-walls.glb').then(
       (result) => {
         result.meshes.forEach(mesh => {
           mesh.checkCollisions = true;
@@ -127,7 +138,7 @@ export class HomeComponent implements OnInit {
 
   }
 
-  attachItemEventHandlers (book: Book, events: { name: string, handler: (book: Book) => void }[]) {
+  attachItemEventHandlers(book: Book, events: { name: string, handler: (book: Book) => void }[]) {
     var outlineWidth = 0.005;
 
     var mesh = book.coverMesh!;
@@ -149,7 +160,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  defineCamera() : Camera{
+  defineCamera(): Camera {
     var camera = new FreeCamera("camera", new Vector3(0, 6, 0), this.scene as Scene);
     camera.setTarget(new Vector3(1, 6, 0));
     camera.attachControl(this.canvas, true);
