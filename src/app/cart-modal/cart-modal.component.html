@@ -1,8 +1,13 @@
 <div [class]="'card-wrapper ' + ( show ? 'active' : '' )">
   <div class="card">
     <div class="card_">
-      <div class="title">
-        <h3>سبد خرید شما</h3>
+      <div class="head">
+        <span class="close-icon-wrapper" (click)="close()">
+          <app-close-icon class="close-icon" [size]="22"></app-close-icon>
+        </span>
+        <div class="title">
+          <h3>سبد خرید شما</h3>
+        </div>
       </div>
 
       <div class="details">

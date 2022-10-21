@@ -8,7 +8,7 @@ import { Modal } from '../shared/models/Modal';
 })
 export class CartModalComponent implements OnInit, Modal {
 
-  show:boolean = true;
+  show:boolean = false;
   constructor() { }
 
   close():void{
