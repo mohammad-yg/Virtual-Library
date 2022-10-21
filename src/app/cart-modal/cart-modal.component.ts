@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Modal } from '../shared/models/Modal';
+import { CartService } from '../services/cart.service'
+import { bookDetail } from '../book-detail/book-detail.service';
 
 @Component({
   selector: 'app-cart-modal',
@@ -9,7 +11,9 @@ import { Modal } from '../shared/models/Modal';
 export class CartModalComponent implements OnInit, Modal {
 
   show:boolean = false;
-  constructor() { }
+  books:bookDetail[] = [];
+  totalPrice:number = 0;
+  constructor(private cartService:CartService) { }
 
   close():void{
     this.show = false;
@@ -20,6 +24,8 @@ export class CartModalComponent implements OnInit, Modal {
   };
 
   ngOnInit(): void {
+    this.books = this.cartService.rows;
+    this.totalPrice = this.cartService.totalPrice;
   }
 
 }

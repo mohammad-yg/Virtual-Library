@@ -1,43 +1,25 @@
 import { Inject, Injectable } from "@angular/core";
-import { Book } from "../home/home.component";
+import { bookDetail } from "../book-detail/book-detail.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  rows: Row[] = [];
+  rows: bookDetail[] = [];
+  totalPrice: number = 0;
 
-  addBook(book: Book): void {
-    var rowOfBook = this.rows.find(e => e.book === book);
-
-    if (rowOfBook)
-      rowOfBook.number += 1;
-
-    else {
-      this.rows.push({
-        book: book,
-        number: 1
-      })
-    }
+  addBook(book: bookDetail): void {
+    this.rows.push(book);
+    this.totalPrice += book.price;
   }
 
-  removeBook(book: Book, number: number = 1): void {
-    var rowOfBook = this.rows.find(e => e.book === book);
-
-    if (rowOfBook) {
-      rowOfBook.number - number;
-
-      if (rowOfBook.number > 1)
-        this.rows = this.rows.filter(e => e.book !== book);
-    }
+  removeBook(id: number): void {
+    var rowOfBook = this.rows.find(e => e.id === id);
+    this.rows = this.rows.filter(e => e !== rowOfBook);
+    this.totalPrice -= rowOfBook?.price ?? 0;
   }
 
-  getRows(): Row[] {
+  getRows(): bookDetail[] {
     return this.rows;
   }
 }
-
-export type Row = {
-  book: Book,
-  number: number;
-};

@@ -11,32 +11,21 @@
       </div>
 
       <div class="details">
-        <div class="row">
+        <div class="row" *ngFor="let book of books">
           <div class="img-box">
-            <img src="/assets/images/book-cover-001.jpg" alt="">
+            <img [src]="book.imageUrl" alt="">
           </div>
           <div class="detail">
             <div class="book-title">
-              <p>کتاب سمفونی مردگان</p>
+              <p>{{book.title}}</p>
             </div>
-            <div class="book-price">130,000 تومان</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="img-box">
-            <img src="/assets/images/book-cover-001.jpg" alt="">
-          </div>
-          <div class="detail">
-            <div class="book-title">
-              <p>کتاب سمفونی مردگان</p>
-            </div>
-            <div class="book-price">130,000 تومان</div>
+            <div class="book-price">{{book.price}} تومان</div>
           </div>
         </div>
       </div>
 
       <div class="total-price">
-        <p>مجموع خرید شما 260,000 تومان</p>
+        <p>مجموع خرید شما {{totalPrice}} تومان</p>
       </div>
     </div>
   </div>
