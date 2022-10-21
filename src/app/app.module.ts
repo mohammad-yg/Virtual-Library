@@ -20,6 +20,7 @@ import { CartButtonComponent } from './layout/header/cart-button/cart-button.com
 import { LayoutComponent } from './layout/layout.component';
 import { CartModalComponent } from './cart-modal/cart-modal.component';
 import { CartService } from './services/cart.service';
+import { TrashIconComponent } from './shared/icons/trash-icon/trash-icon.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { CartService } from './services/cart.service';
     CartButtonComponent,
     LayoutComponent,
     CartModalComponent,
+    TrashIconComponent,
   ],
   imports: [
     BrowserModule,
