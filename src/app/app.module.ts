@@ -19,6 +19,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { CartButtonComponent } from './layout/header/cart-button/cart-button.component';
 import { LayoutComponent } from './layout/layout.component';
 import { CartModalComponent } from './cart-modal/cart-modal.component';
+import { CartService } from './services/cart.service';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,7 @@ import { CartModalComponent } from './cart-modal/cart-modal.component';
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [CartService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

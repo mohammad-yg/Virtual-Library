@@ -19,13 +19,13 @@
             <div class="book-title">
               <p>{{book.title}}</p>
             </div>
-            <div class="book-price">{{book.price}} تومان</div>
+            <div class="book-price">{{getPrice(book)}} تومان</div>
           </div>
         </div>
       </div>
 
       <div class="total-price">
-        <p>مجموع خرید شما {{totalPrice}} تومان</p>
+        <p>مجموع خرید شما {{getTotalPrice()}} تومان</p>
       </div>
     </div>
   </div>
