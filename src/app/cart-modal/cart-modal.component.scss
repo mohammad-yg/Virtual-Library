@@ -1,0 +1,124 @@
+.card-wrapper {
+  width: 440px;
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: -440px;
+
+  transition: 600ms left;
+}
+.active {
+  left: 0;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+
+  margin: 10px;
+
+  width: 100%;
+  border-radius: 8px;
+  background-color: #acc1d7;
+
+  padding-left: 5px;
+}
+
+.card_ {
+  height: 100%;
+  width: 100%;
+}
+
+.title{
+  margin-top: 30px;
+  line-height: 20px;
+  font-size: 20px;
+}
+
+.total-books{
+  text-align: right;
+  line-height: 10px;
+  font-size: 14px;
+  padding-right: 25px;
+
+}
+
+.details{
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  margin-top: 20px;
+  overflow-y: scroll;
+  max-height: 400px;
+}
+
+.details::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Track */
+.details::-webkit-scrollbar-track {
+  border-radius: 5px;
+  // background-color: #d9ebff;
+}
+
+/* Handle */
+.details::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+.details::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+.row{
+  display: flex;
+  flex-direction: row;
+  margin-top: 15px;
+}
+
+.img-box{
+  width: 100px;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+
+  img{
+    position: absolute;
+    height: 100%;
+    transform: translate(50%,-50%);
+    top: 50%;
+    right: 50%;
+  }
+}
+
+.detail{
+  display: flex;
+  flex-direction: column;
+
+  padding-right: 15px;
+  text-align: right;
+}
+
+.book-title{
+  line-height: 10px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.book-price{
+  line-height: 15px;
+  margin-top: 24px;
+}
+
+.total-price{
+  line-height: 10px;
+  font-size: 14px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  padding-right: 25px;
+  text-align: right;
+}

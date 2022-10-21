@@ -7,6 +7,7 @@ import { pullingOnBookAnimation } from 'src/animations/pullingOnBook';
 import { takingOutBookAnimation } from 'src/animations/takingOutBook';
 import { zoomCameraAnimation } from 'src/animations/zoomCamera';
 import { BookDetailInput } from '../book-detail/book-detail.component';
+import { Modal } from '../shared/models/Modal';
 import { BookService } from './book.service';
 
 export type Book = {
@@ -19,10 +20,6 @@ export type Book = {
 
   coverMesh?: AbstractMesh,
   paperMesh?: AbstractMesh,
-}
-export interface modal {
-  close: () => void,
-  open: (id?: number) => void
 }
 
 @Component({
@@ -45,7 +42,7 @@ export class HomeComponent implements OnInit {
   bookAnimationGroup: AnimationGroup | undefined;
   takedOutBook: Book | undefined;
 
-  @ViewChild('bookDetailModal', { static: true }) bookDetailModal: modal = { close: () => { }, open: (numbrt) => { } };
+  @ViewChild('bookDetailModal', { static: true }) bookDetailModal: Modal = { close: () => { }, open: (numbrt) => { } };
 
   constructor(private bookService: BookService) {
   }

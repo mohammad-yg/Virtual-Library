@@ -1,7 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { modal } from '../home/home.component';
-import { BookInformationData } from './book-detail-information/book-detail-information.component';
+import { Component, OnInit } from '@angular/core';
+import { Modal } from '../shared/models/Modal';
 import { bookDetail, BookDetailService } from './book-detail.service';
 
 @Component({
@@ -9,7 +7,7 @@ import { bookDetail, BookDetailService } from './book-detail.service';
   templateUrl: './book-detail.component.html',
   styleUrls: ['./book-detail.component.scss']
 })
-export class BookDetailComponent implements OnInit, modal {
+export class BookDetailComponent implements OnInit, Modal {
 
   data: bookDetail = new bookDetail();
   show: boolean = false;

@@ -18,6 +18,7 @@ import { BookDetailFooterComponent } from './book-detail/book-detail-footer/book
 import { HeaderComponent } from './layout/header/header.component';
 import { CartButtonComponent } from './layout/header/cart-button/cart-button.component';
 import { LayoutComponent } from './layout/layout.component';
+import { CartModalComponent } from './cart-modal/cart-modal.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { LayoutComponent } from './layout/layout.component';
     BookDetailFooterComponent,
     HeaderComponent,
     CartButtonComponent,
-    LayoutComponent
+    LayoutComponent,
+    CartModalComponent,
   ],
   imports: [
     BrowserModule,
