@@ -11,8 +11,6 @@ export class pullingOnBookAnimation {
     var rotateAnimation = new Animation("tutoAnimation", "rotation.y", 60, Animation.ANIMATIONTYPE_FLOAT,
       Animation.ANIMATIONLOOPMODE_CYCLE);
 
-
-    console.log('pull', bookNode.position.x);
     takeOutAnimation.setKeys([
       {
         frame: 0,
@@ -27,8 +25,6 @@ export class pullingOnBookAnimation {
         value: bookNode.position.x
       }
     ]);
-    console.log('pull', bookNode.position.x);
-
 
     rotateAnimation.setKeys([
       {

@@ -11,7 +11,6 @@ export class takingOutBookAnimation {
     var rotateAnimation = new Animation("tutoAnimation", "rotation.y", 60, Animation.ANIMATIONTYPE_FLOAT,
       Animation.ANIMATIONLOOPMODE_CYCLE);
 
-    console.log('out', bookNode.position.x);
     takeOutAnimation.setKeys([
       {
         frame: 0,
@@ -22,7 +21,6 @@ export class takingOutBookAnimation {
         value: bookNode.position.x + 1
       }
     ]);
-    console.log('out', bookNode.position.x);
 
     rotateAnimation.setKeys([
       {

@@ -130,8 +130,6 @@ export class HomeComponent implements OnInit {
 
                 this.takedOutBook = undefined;
               }
-
-              console.log('home', (this.scene?.getNodeByID(book.nodeId) as any).position.x);
             }
           }
         ];
