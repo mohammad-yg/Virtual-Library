@@ -3,6 +3,7 @@ import { Modal } from '../shared/models/Modal';
 import { CartService } from '../services/cart.service'
 import { bookDetail } from '../book-detail/book-detail.service';
 import { formatPrice } from '../shared/_helpers';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cart-modal',
@@ -11,30 +12,36 @@ import { formatPrice } from '../shared/_helpers';
 })
 export class CartModalComponent implements OnInit, Modal {
 
-  show:boolean = false;
-  books:bookDetail[] = [];
-  constructor(private cartService:CartService) { }
+  show: boolean = false;
+  books: Observable<bookDetail[]>;
+  totalPrice: Observable<number>;
+  formatedTotalPrice = "";
 
-  close():void{
+  constructor(private cartService: CartService) {
+    this.books = cartService.rows$;
+    this.totalPrice = cartService.totalPrice$;
+  }
+
+  close(): void {
     this.show = false;
   }
 
-  open(id?: number | undefined){
+  open(id?: number | undefined) {
     this.show = true;
   };
 
   ngOnInit(): void {
-    this.books = this.cartService.rows;
+    this.totalPrice.subscribe(e => {
+      this.formatedTotalPrice = formatPrice(e)
+    })
   }
 
-  getTotalPrice(): string{
-    let totalPrice = 0;
-    this.books.forEach(b => totalPrice += b.price);
-    return formatPrice(totalPrice);
-  }
-
-  getPrice(book:bookDetail):string{
+  getPrice(book: bookDetail): string {
     return formatPrice(book.price)
+  }
+
+  removeBook(book: bookDetail) {
+    this.cartService.removeBook(book.id);
   }
 
 }

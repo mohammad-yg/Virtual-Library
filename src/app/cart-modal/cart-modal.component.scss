@@ -85,7 +85,13 @@
 .row{
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   margin-top: 15px;
+}
+
+.right-box{
+  display: flex;
+  flex-direction: row;
 }
 
 .img-box{
@@ -113,7 +119,7 @@
 }
 
 .book-title{
-  line-height: 10px;
+  line-height: 25px;
   font-size: 18px;
   font-weight: 500;
 }
@@ -121,6 +127,16 @@
 .book-price{
   line-height: 15px;
   margin-top: 24px;
+}
+
+.actions{
+  width: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.trash-icon-wrapper{
+  cursor: pointer;
 }
 
 .total-price{

@@ -11,21 +11,28 @@
       </div>
 
       <div class="details">
-        <div class="row" *ngFor="let book of books">
-          <div class="img-box">
-            <img [src]="book.imageUrl" alt="">
-          </div>
-          <div class="detail">
-            <div class="book-title">
-              <p>{{book.title}}</p>
+        <div class="row" *ngFor="let book of books | async">
+          <div class="right-box">
+            <div class="img-box">
+              <img [src]="book.imageUrl" alt="">
             </div>
-            <div class="book-price">{{getPrice(book)}} تومان</div>
+            <div class="detail">
+              <div class="book-title">
+                <p>{{book.title}}</p>
+              </div>
+              <div class="book-price">{{getPrice(book)}} تومان</div>
+            </div>
+          </div>
+          <div class="actions">
+            <span (click)="removeBook(book)" class="trash-icon-wrapper">
+              <app-trash-icon [size]="32"></app-trash-icon>
+            </span>
           </div>
         </div>
       </div>
 
       <div class="total-price">
-        <p>مجموع خرید شما {{getTotalPrice()}} تومان</p>
+        <p>مجموع خرید شما {{formatedTotalPrice}} تومان</p>
       </div>
     </div>
   </div>
