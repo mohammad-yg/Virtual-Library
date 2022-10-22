@@ -1,25 +1,50 @@
 import { Inject, Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
 import { bookDetail } from "../book-detail/book-detail.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  rows: bookDetail[] = [];
-  totalPrice: number = 0;
+  private rowsSubject = new BehaviorSubject<bookDetail[]>([])
+  rows$: Observable<bookDetail[]>;
+  totalPrice$: Observable<number>;
+  totalPriceSubject = new BehaviorSubject<number>(0);
+
+  constructor() {
+    this.rows$ = this.rowsSubject.asObservable();
+    this.totalPrice$ = this.totalPriceSubject.asObservable();
+  }
 
   addBook(book: bookDetail): void {
-    this.rows.push(book);
-    this.totalPrice += book.price;
+    let rows = this.rowsSubject.getValue();
+    rows.push(book);
+    this.rowsSubject.next(rows);
+    this.totalPriceSubject.next(this.totalPriceSubject.getValue() + book.price);
   }
 
   removeBook(id: number): void {
-    var rowOfBook = this.rows.find(e => e.id === id);
-    this.rows = this.rows.filter(e => e !== rowOfBook);
-    this.totalPrice -= rowOfBook?.price ?? 0;
-  }
+    let rows = this.rowsSubject.getValue();
+    let shouldDeleteRow = rows.find(e => e.id == id);
 
-  getRows(): bookDetail[] {
-    return this.rows;
+    if (Array.isArray(shouldDeleteRow))
+      shouldDeleteRow = shouldDeleteRow[0];
+
+    if (shouldDeleteRow)
+    {
+      let finalyRows = [] as bookDetail[];
+      let rowIsDeleted = false;
+      rows.forEach(e => {
+        if(e !== shouldDeleteRow || rowIsDeleted){
+          finalyRows.push(e);
+        }
+        else{
+          rowIsDeleted = true;
+        }
+      });
+      this.rowsSubject.next(finalyRows);
+      this.totalPriceSubject.next(this.totalPriceSubject.getValue() - shouldDeleteRow.price);
+    }
+
   }
 }
