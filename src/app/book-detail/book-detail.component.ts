@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Modal } from '../shared/models/Modal';
 import { bookDetail, BookDetailService } from './book-detail.service';
+import { Modal } from '../shared/models/modal';
 
 @Component({
   selector: 'app-book-detail',

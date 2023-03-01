@@ -7,7 +7,7 @@ import { pullingOnBookAnimation } from 'src/animations/pullingOnBook';
 import { takingOutBookAnimation } from 'src/animations/takingOutBook';
 import { zoomCameraAnimation } from 'src/animations/zoomCamera';
 import { BookDetailInput } from '../book-detail/book-detail.component';
-import { Modal } from '../shared/models/Modal';
+import { Modal } from '../shared/models/modal';
 import { BookService } from './book.service';
 
 export type Book = {

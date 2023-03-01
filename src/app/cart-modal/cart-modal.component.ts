@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Modal } from '../shared/models/Modal';
+import { Modal } from '../shared/models/modal';
 import { CartService } from '../services/cart.service'
 import { bookDetail } from '../book-detail/book-detail.service';
 import { formatPrice } from '../shared/_helpers';
