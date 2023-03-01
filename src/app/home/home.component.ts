@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
   bookAnimationGroup: AnimationGroup | undefined;
   takedOutBook: Book | undefined;
 
-  @ViewChild('bookDetailModal', { static: true }) bookDetailModal: Modal = { close: () => { }, open: (numbrt) => { } };
+  @ViewChild('bookDetailModal', { static: true }) bookDetailModal: Modal = { close: () => { }, open: () => { } };
 
   constructor(private bookService: BookService) {
   }

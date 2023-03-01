@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Modal } from 'src/app/shared/models/Modal';
+import { Modal } from 'src/app/shared/models/modal';
 @Component({
   selector: 'app-cart-button',
   templateUrl: './cart-button.component.html',
